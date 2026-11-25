@@ -114,6 +114,46 @@ input::placeholder{color:#76746C}
 .empty{background:#FFFFFF;border:1px dashed var(--input);border-radius:12px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
 .empty p{margin:0;font-size:15px}
 
+/* AI 問答 */
+.home{display:flex;flex-direction:column;gap:32px}
+.ai-box{background:#FFFFFF;border:1px solid var(--line);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px}
+.ai-title{margin:0;font-size:26px;line-height:1.3;font-weight:700}
+.ai-sub{margin:0;font-size:15px;color:var(--ink2)}
+.ask-row{display:flex;gap:10px;flex-wrap:wrap}
+.ask-row input{flex:1 1 420px;min-width:0;height:52px;padding:0 16px;border:1px solid var(--input);border-radius:10px;font-size:16px;color:var(--ink);background:#FFFFFF}
+.btn-ask{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 24px;border:0;border-radius:10px;background:var(--brand);color:#FFFFFF;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-ask:hover{background:var(--brand-dark)}
+.btn-ask:disabled{opacity:.75;cursor:progress}
+.ex-row{display:flex;gap:8px;flex-wrap:wrap}
+.ex{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:0;border-radius:22px;background:var(--soft);color:var(--ink);font-size:14px;text-align:left;cursor:pointer}
+.ex:hover{background:#E6E5DF}
+.ask-view{width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;border:0;background:none;color:var(--brand-ink);font-size:14px;font-weight:500;cursor:pointer}
+.back:hover{color:var(--brand-dark)}
+.ask-list{display:flex;flex-direction:column;gap:24px}
+.qa{display:flex;flex-direction:column;gap:12px}
+.q-bubble{align-self:flex-end;max-width:80%;background:var(--ink);color:#FFFFFF;padding:12px 16px;border-radius:14px 14px 4px 14px;font-size:15px;overflow-wrap:anywhere}
+.a-card{background:#FFFFFF;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.a-head{display:flex;gap:12px;align-items:flex-start}
+.a-ico{flex:none;width:32px;height:32px;border-radius:16px;background:#E8F0FB;color:var(--brand);display:inline-flex;align-items:center;justify-content:center}
+.a-ico.muted{background:var(--soft);color:var(--ink2)}
+.a-text{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;padding-top:4px}
+.a-text p{margin:0;font-size:15px;overflow-wrap:anywhere}
+.a-text .a-sub{font-size:14px;color:var(--ink2)}
+.a-results{display:flex;flex-direction:column;gap:10px;padding-left:44px}
+.res{border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.res-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.res-main{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.res-t{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.res-d{font-size:13px;color:var(--ink2);overflow-wrap:anywhere}
+.res-m{font-size:12px;color:var(--ink3);overflow-wrap:anywhere}
+.open-soft{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:8px;background:#E8F0FB;color:var(--brand-ink);font-weight:500;font-size:14px;text-decoration:none}
+.open-soft:hover{background:#DCE8F8;color:var(--brand-dark)}
+.fb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:44px}
+.fb-label{font-size:13px;color:var(--ink3)}
+.ai-note{display:flex;gap:10px;align-items:flex-start;background:#ECEBE5;border-radius:12px;padding:14px 16px;font-size:13px;color:#48473F}
+.ai-note svg{flex:none;margin-top:1px}
+
 /* 修改密碼對話框 */
 .dlg{border:0;padding:0;background:transparent;width:calc(100% - 32px);max-width:480px;max-height:calc(100% - 32px);color:var(--ink)}
 .dlg::backdrop{background:rgba(27,27,25,.45)}
@@ -137,6 +177,11 @@ input::placeholder{color:#76746C}
   .panel{padding:28px 20px}
   .card{padding:16px}
   .empty{padding:24px 16px}
+  .ai-box{padding:20px}
+  .ai-title{font-size:22px}
+  .a-card{padding:16px}
+  .a-results,.fb{padding-left:0}
+  .q-bubble{max-width:90%}
 }
 </style>
 </head>
@@ -218,6 +263,18 @@ input::placeholder{color:#76746C}
   </header>
 
   <main class="main">
+   <div id="home-view" class="home">
+    <section id="ai-sec" class="ai-box" aria-labelledby="ai-h" hidden>
+      <h2 id="ai-h" class="ai-title">想找什麼？直接問</h2>
+      <p class="ai-sub">用平常說話的方式描述，AI 會從資源總表裡找出相關的連結。</p>
+      <form id="ai-form" class="ask-row" novalidate>
+        <label for="ai-q" class="sr-only">你的問題</label>
+        <input id="ai-q" type="text" maxlength="300" autocomplete="off" placeholder="例如：去年的共學群表">
+        <button id="ai-btn" class="btn-ask" type="submit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>問 AI</button>
+      </form>
+      <div id="ai-examples" class="ex-row" role="group" aria-label="範例問題"></div>
+    </section>
+
     <section id="pin-sec" class="sec" aria-labelledby="pin-h">
       <h2 id="pin-h" class="sec-title">常用</h2>
       <div id="pin-grid" class="pin-grid"></div>
@@ -241,6 +298,19 @@ input::placeholder{color:#76746C}
         <p>沒有符合的項目。換個關鍵字，或清除篩選再試試。</p>
         <button id="clear-btn" class="btn" type="button">清除篩選</button>
       </div>
+    </section>
+   </div>
+
+    <section id="ask-view" class="ask-view" aria-labelledby="ask-h" hidden>
+      <h2 id="ask-h" class="sr-only">AI 問答</h2>
+      <button id="ask-back" class="back" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 18l-6-6 6-6"></path></svg>回首頁</button>
+      <form id="ask-form" class="ask-row" novalidate>
+        <label for="ask-q" class="sr-only">你的問題</label>
+        <input id="ask-q" type="text" maxlength="300" autocomplete="off" placeholder="再問一題…">
+        <button id="ask-btn" class="btn-ask" type="submit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"></path></svg>問 AI</button>
+      </form>
+      <div id="ask-list" class="ask-list"></div>
+      <div class="ai-note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg><span>AI 只根據資源總表回答，讀不到檔案內容；你沒有權限的項目，不會出現在回答裡。問題會留下紀錄，給管理者補資源總表用，請不要輸入個人資料。</span></div>
     </section>
   </main>
 </div>
@@ -285,6 +355,9 @@ input::placeholder{color:#76746C}
   var GROUP_ORDER = ['維運', '課務', '剪輯', '共用'];
   var CATS = ['選課與媒合', '日常課務', '師資相關', '教材與教學資源', '客服與宣導', '統計與報告', '計畫與行政', '內部管理'];
   var MIN_PW = 6;
+  var MAX_Q = 300;
+  var MAX_HISTORY = 3;
+  var FEEDBACK = ['有幫助', '沒找到我要的'];
 
   // 類型 → [圖示底色, 圖示顏色, 圖示]
   var TYPE_STYLE = {
@@ -309,7 +382,10 @@ input::placeholder{color:#76746C}
     user: [['circle', { cx: 12, cy: 8, r: 4 }], ['path', { d: 'M4 21a8 8 0 0 1 16 0' }]],
     lock: [['rect', { x: 5, y: 11, width: 14, height: 10, rx: 2 }], ['path', { d: 'M8 11V8a4 4 0 0 1 8 0v3' }]],
     open: [['path', { d: 'M14 4h6v6' }], ['path', { d: 'M20 4l-9 9' }], ['path', { d: 'M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5' }]],
-    book: [['path', { d: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z' }], ['path', { d: 'M4 19V5' }], ['path', { d: 'M9 7h6' }]]
+    book: [['path', { d: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z' }], ['path', { d: 'M4 19V5' }], ['path', { d: 'M9 7h6' }]],
+    chat: [['path', { d: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z' }]],
+    search: [['circle', { cx: 11, cy: 11, r: 7 }], ['path', { d: 'M20 20l-3.5-3.5' }]],
+    info: [['circle', { cx: 12, cy: 12, r: 9 }], ['path', { d: 'M12 11v5' }], ['path', { d: 'M12 8h.01' }]]
   };
 
   var S = freshState();
@@ -317,7 +393,7 @@ input::placeholder{color:#76746C}
   var toastTimer = 0;
 
   function freshState() {
-    return { site: null, user: null, sheetUrl: '', years: [], cards: [], q: '', year: '全部', grp: '全部', cat: '全部', sel: new Map() };
+    return { site: null, user: null, sheetUrl: '', years: [], cards: [], q: '', year: '全部', grp: '全部', cat: '全部', sel: new Map(), mode: 'home', ask: [], askBusy: false };
   }
 
   /* ---------- 小工具 ---------- */
@@ -560,7 +636,8 @@ input::placeholder{color:#76746C}
   function applyCatalog(res) {
     var site = res.site && typeof res.site === 'object' ? res.site : {};
     var user = res.user && typeof res.user === 'object' ? res.user : {};
-    S.site = { name: str(site.name) || DEFAULT_NAME, subtitle: str(site.subtitle), ai: site.ai === true };
+    var examples = Array.isArray(site.aiExamples) ? site.aiExamples.map(str).filter(Boolean).slice(0, 3) : [];
+    S.site = { name: str(site.name) || DEFAULT_NAME, subtitle: str(site.subtitle), ai: site.ai === true, aiExamples: examples };
     S.user = { account: str(user.account), name: str(user.name) || str(user.account), level: user.level === '管理者' ? '管理者' : '同仁' };
     S.sheetUrl = safeUrl(str(res.sheetUrl)) ? str(res.sheetUrl) : '';
     var items = (Array.isArray(res.items) ? res.items : []).map(normItem).filter(Boolean);
@@ -719,12 +796,244 @@ input::placeholder{color:#76746C}
 
   function renderMain() {
     renderHeader();
+    S.ask = [];
+    $('ask-list').textContent = '';
+    setAskBusy(false);
+    setMode('home', true);
+    renderAiBox();
     renderPinned();
     $('kw').value = S.q;
     renderChips('f-year', ['全部'].concat(S.years), 'year', true);
     renderChips('f-group', ['全部'].concat(GROUP_FILTERS), 'grp', false);
     renderChips('f-cat', ['全部'].concat(CATS), 'cat', false);
     renderCards();
+  }
+
+  /* ---------- AI 問答 ---------- */
+  function setMode(mode, silent) {
+    S.mode = mode === 'ask' ? 'ask' : 'home';
+    var ask = S.mode === 'ask';
+    $('ask-view').hidden = !ask;
+    $('home-view').hidden = ask;
+    if (!silent) window.scrollTo(0, 0);
+  }
+
+  function renderAiBox() {
+    var on = !!(S.site && S.site.ai);
+    $('ai-sec').hidden = !on;
+    var box = $('ai-examples');
+    box.textContent = '';
+    if (!on) return;
+    S.site.aiExamples.forEach(function (q) {
+      var b = h('button', { type: 'button', class: 'ex', text: q });
+      b.addEventListener('click', function () { startAsk(q); });
+      box.appendChild(b);
+    });
+    box.hidden = S.site.aiExamples.length === 0;
+  }
+
+  function sessionExpired() {
+    clearToken();
+    S = freshState();
+    showLogin('登入已失效，請重新登入。');
+  }
+
+  /** 從首頁問：開始新的對話。 */
+  function startAsk(text) {
+    var q = str(text);
+    if (!q) { $('ai-q').focus(); return; }
+    if (S.askBusy) return;
+    S.ask = [];
+    $('ask-list').textContent = '';
+    $('ai-q').value = '';
+    setMode('ask');
+    sendAsk(q);
+  }
+
+  function onHomeAsk(e) {
+    e.preventDefault();
+    startAsk($('ai-q').value);
+  }
+
+  /** 在問答頁接著問：保留最近 3 題當作先前的對話。 */
+  function onAskSubmit(e) {
+    e.preventDefault();
+    var q = str($('ask-q').value);
+    if (!q) { $('ask-q').focus(); return; }
+    if (S.askBusy) return;
+    $('ask-q').value = '';
+    sendAsk(q);
+  }
+
+  function setAskBusy(b) {
+    S.askBusy = b;
+    $('ask-btn').disabled = b;
+    $('ai-btn').disabled = b;
+  }
+
+  function sendAsk(text) {
+    var q = Array.from(text).slice(0, MAX_Q).join('');
+    var history = S.ask.filter(function (x) { return x.ok; }).slice(-MAX_HISTORY).map(function (x) {
+      return { q: x.q, a: x.a, items: x.labels };
+    });
+    var entry = { q: q, a: '', labels: [], ok: false };
+    S.ask.push(entry);
+    var slot = h('div', { class: 'a-slot' }, loadingCard());
+    var sec = h('section', { class: 'qa', 'aria-label': '問題：' + q }, h('div', { class: 'q-bubble', text: q }), slot);
+    var list = $('ask-list');
+    list.insertBefore(sec, list.firstChild);
+    setAskBusy(true);
+    var mine = S;
+    api('ask', { token: readToken(), question: q, history: history }).then(function (res) {
+      if (mine !== S) return;
+      if (res.ok) {
+        var view = answerView(res);
+        entry.ok = true;
+        entry.a = str(res.answer);
+        entry.labels = view.labels;
+        slot.replaceChildren(view.el);
+      } else if (res.code === 'AUTH') {
+        sessionExpired();
+      } else {
+        slot.replaceChildren(errorCard(str(res.error) || 'AI 暫時沒辦法回答，請稍後再試。', str(res.detail), q));
+      }
+    }, function () {
+      if (mine !== S) return;
+      slot.replaceChildren(errorCard('連不上後端，請稍後再試。', '', q));
+    }).then(function () {
+      if (mine === S) setAskBusy(false);
+    });
+  }
+
+  function loadingCard() {
+    return h('div', { class: 'a-card', role: 'status' },
+      h('div', { class: 'a-head' },
+        h('span', { class: 'a-ico', 'aria-hidden': 'true' }, icon('chat', 18)),
+        h('div', { class: 'a-text' },
+          h('p', { class: 'a-sub', text: 'AI 正在找…' }),
+          h('div', { class: 'skel', style: 'height:14px;width:80%', 'aria-hidden': 'true' }),
+          h('div', { class: 'skel', style: 'height:14px;width:55%', 'aria-hidden': 'true' }))));
+  }
+
+  function errorCard(msg, detail, retryText) {
+    var retry = h('button', { type: 'button', class: 'btn', text: '再問一次' });
+    retry.addEventListener('click', function () {
+      if (S.askBusy) return;
+      sendAsk(retryText);
+    });
+    return h('div', { class: 'a-card', role: 'alert' },
+      h('div', { class: 'a-head' },
+        h('span', { class: 'a-ico muted', 'aria-hidden': 'true' }, icon('info', 18)),
+        h('div', { class: 'a-text' },
+          h('p', { text: msg }),
+          detail ? h('p', { class: 'a-sub', text: '細節（只有管理者看得到）：' + detail }) : null)),
+      h('div', { class: 'fb' }, retry));
+  }
+
+  function cardByKey(key) {
+    for (var i = 0; i < S.cards.length; i++) {
+      if (S.cards[i].key === key) return S.cards[i];
+    }
+    return null;
+  }
+
+  /** 後端回傳的推薦項目對回首頁的卡片；學年度沒給或不存在時用最新的。 */
+  function answerPicks(items) {
+    var picks = [];
+    var seen = {};
+    (Array.isArray(items) ? items : []).forEach(function (it) {
+      if (!it || typeof it !== 'object' || picks.length >= 5) return;
+      var c = cardByKey(str(it.series));
+      if (!c) return;
+      var y = str(it.year);
+      if (!y || !c.byYear.has(y)) y = c.years[0];
+      var k = c.key + '\u0001' + y;
+      if (seen[k]) return;
+      seen[k] = true;
+      picks.push({ card: c, year: y });
+    });
+    return picks;
+  }
+
+  function answerView(res) {
+    var picks = answerPicks(res.items);
+    var answer = str(res.answer);
+    var labels = picks.map(function (p) { return p.card.title + (p.year && p.year !== '常設' ? ' ' + p.year : ''); });
+    if (!picks.length) {
+      return {
+        labels: labels,
+        el: h('div', { class: 'a-card' },
+          h('div', { class: 'a-head' },
+            h('span', { class: 'a-ico muted', 'aria-hidden': 'true' }, icon('search', 18)),
+            h('div', { class: 'a-text' },
+              h('p', { text: answer || '資源總表裡沒有找到相關的項目。' }),
+              h('p', { class: 'a-sub', text: '這個問題已經記下來，管理者補上之後就查得到；急的話可以先問管理者。' }))))
+      };
+    }
+    var results = h('div', { class: 'a-results' });
+    picks.forEach(function (p) { results.appendChild(resultItem(p.card, p.year)); });
+    var id = str(res.id);
+    return {
+      labels: labels,
+      el: h('div', { class: 'a-card' },
+        h('div', { class: 'a-head' },
+          h('span', { class: 'a-ico', 'aria-hidden': 'true' }, icon('chat', 18)),
+          h('div', { class: 'a-text' }, h('p', { text: answer || '找到下面這些項目。' }))),
+        results,
+        /^[0-9a-f]{16}$/.test(id) ? feedbackRow(id) : null)
+    };
+  }
+
+  function resultItem(c, y) {
+    var files = c.byYear.get(y) || [];
+    var f0 = files[0];
+    var single = files.length === 1;
+    var meta = [f0.type, yearLabel(y), c.cat];
+    if (single && f0.type !== '網頁' && f0.owner) meta.push('擁有者：' + f0.owner);
+    var box = h('div', { class: 'res' });
+    box.appendChild(h('div', { class: 'res-top' },
+      typeBox(f0.type),
+      h('div', { class: 'res-main' },
+        h('span', { class: 'res-t', text: c.title }),
+        c.desc ? h('span', { class: 'res-d', text: c.desc }) : null,
+        h('span', { class: 'res-m', text: meta.filter(Boolean).join('・') })),
+      single ? h('a', { class: 'open-soft', href: f0.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': '開啟 ' + f0.name + '（另開新分頁）' }, '開啟', icon('open', 16)) : null));
+    if (!single) {
+      var list = h('div', { class: 'files' });
+      files.forEach(function (f) {
+        list.appendChild(h('div', { class: 'file' },
+          h('div', { class: 'file-info' }, h('span', { class: 'file-name', text: f.name })),
+          h('a', { class: 'open', href: f.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': '開啟 ' + f.name + '（另開新分頁）' }, '開啟', icon('open', 16))));
+      });
+      box.appendChild(list);
+    }
+    return box;
+  }
+
+  function feedbackRow(id) {
+    var row = h('div', { class: 'fb' }, h('span', { class: 'fb-label', text: '這個回答有幫助嗎？' }));
+    var buttons = FEEDBACK.map(function (v) {
+      var b = h('button', { type: 'button', class: 'btn', text: v });
+      b.addEventListener('click', function () {
+        buttons.forEach(function (x) { x.disabled = true; });
+        api('feedback', { token: readToken(), id: id, value: v }).then(function (res) {
+          if (res.ok) {
+            row.replaceChildren(h('span', { class: 'fb-label', text: '謝謝，已記下你的回饋。' }));
+          } else if (res.code === 'AUTH') {
+            sessionExpired();
+          } else {
+            buttons.forEach(function (x) { x.disabled = false; });
+            toast(str(res.error) || '回饋沒有送出，請稍後再試。');
+          }
+        }, function () {
+          buttons.forEach(function (x) { x.disabled = false; });
+          toast('連不上後端，回饋沒有送出。');
+        });
+      });
+      row.appendChild(b);
+      return b;
+    });
+    return row;
   }
 
   /* ---------- 流程 ---------- */
@@ -767,7 +1076,14 @@ input::placeholder{color:#76746C}
         saveToken(res.token);
         $('pwd').value = '';
         S = freshState();
-        loadCatalog();
+        // 後端在登入時就一併回傳網站資料；舊版後端沒有時再另外讀一次。
+        if (res.site && Array.isArray(res.items)) {
+          applyCatalog(res);
+          renderMain();
+          show('v-main');
+        } else {
+          loadCatalog();
+        }
       } else {
         setMsg($('login-msg'), str(res.error) || '帳號或密碼不正確');
         $('pwd').focus();
@@ -862,6 +1178,9 @@ input::placeholder{color:#76746C}
   $('retry-btn').addEventListener('click', loadCatalog);
   $('clear-btn').addEventListener('click', clearFilters);
   $('kw').addEventListener('input', function (e) { S.q = e.target.value; renderCards(); });
+  $('ai-form').addEventListener('submit', onHomeAsk);
+  $('ask-form').addEventListener('submit', onAskSubmit);
+  $('ask-back').addEventListener('click', function () { setMode('home'); });
 
   paintSiteName();
   if (!str(API_URL)) {
